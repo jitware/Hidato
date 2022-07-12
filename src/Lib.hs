@@ -1,4 +1,14 @@
-module Lib (boxCoor,posValue, posUno, maxMatrix, allValuesMatrix,setInMatrix ) where
+module Lib (boxCoor,posValue, posUno, maxMatrix, allValuesMatrix,setInMatrix, equalOrBest,roundMatrixUniques,len,indexMatriz,fullMatrixUniques ) where
+
+--Movimientos alrededor de una casilla
+mov 0 = [-1,-1]
+mov 1 = [-1,0]
+mov 2 = [-1,1]
+mov 3 = [0,-1]
+mov 4 = [0,1]
+mov 5 = [1,-1]
+mov 6 = [1,0]
+mov 7 = [1,1]
 
 index list x = list!!x -- devuelve el elemento de la lista que se encuentra en la posicion x
 
@@ -183,7 +193,7 @@ uniqueInMid1 zom x y i j =
         else 
             if j < 7
                 then
-                    uniqueInMid1 zom x y 0 (j+1)
+                    uniqueInMid1 zom x y (j+1) (j+1)
                 else
                     admValues zom x y    
 
@@ -310,16 +320,24 @@ adjEmptyPos1 matrix x y i =
         else
             [-1,-1]
 
---Movimientos alrededor de una casilla
-mov 0 = [-1,-1]
-mov 1 = [-1,0]
-mov 2 = [-1,1]
-mov 3 = [0,-1]
-mov 4 = [0,1]
-mov 5 = [1,-1]
-mov 6 = [1,0]
-mov 7 = [1,1]
 
+--Devuelve se la matriz resultante poseen al menos todos los valores fijos de la anterior
+equalOrBest matrix matrixresult = equalOrBest1 matrix matrixresult 0 0
+equalOrBest1 matrix matrixresult x y =
+    if y < len(matrix!!x)
+        then
+            if ((indexMatriz matrix x y) /= 0) && ((indexMatriz matrix x y) /= -1)
+                then
+                    (indexMatriz matrix x y) == (indexMatriz matrixresult x y) &&
+                    equalOrBest1 matrix matrixresult x (y+1)
+                else
+                    equalOrBest1 matrix matrixresult x (y+1)    
+        else
+            if x<(len(matrix)-1)
+                then
+                    equalOrBest1 matrix matrixresult (x+1) 0
+                else
+                    True        
 
 -- llena la matriz de valores unicos, valores que siempre seran obligatorios
 fullMatrixUniques matrix = fullMatrixUniques1 matrix True
@@ -352,50 +370,31 @@ fullMatrixUniques2 matrix x y changes=
                 else 
                     fullMatrixUniques1 matrix (changes > 0)   
 
---Devuelve se la matriz resultante poseen al menos todos los valores fijos de la anterior
-equalOrBest matrix matrixresult = equalOrBest1 matrix matrixresult 0 0
-equalOrBest1 matrix matrixresult x y =
+--Aplica valores unicos una sola vez en toda la matriz
+roundMatrixUniques matrix = roundMatrixUniques1 matrix 0 0
+roundMatrixUniques1 matrix x y =
     if y < len(matrix!!x)
         then
-            if ((indexMatriz matrix x y) /= 0) && ((indexMatriz matrix x y) /= -1)
+            if (indexMatriz matrix x y) /= 0
                 then
-                    (indexMatriz matrix x y) == (indexMatriz matrixresult x y) &&
-                    equalOrBest1 matrix matrixresult x (y+1)
-                else
-                    equalOrBest1 matrix matrixresult x (y+1)    
-        else
-            if x<(len(matrix)-1)
-                then
-                    equalOrBest1 matrix matrixresult (x+1) 0
-                else
-                    True        
-
-generateWithMatrix matrix = generateWithMatrix1 matrix 0 0
-generateWithMatrix1 :: [[Int]]->Int-> Int->[[Int]]
-generateWithMatrix1 matrix x y =
-    --si al generar todos los unicos despues de editar la matrix se llega a todos los valores fijados de la anterior
-    --pues se dice que la posicion que se elimino tiene valor unico ya que cambiando solo valores unicos sobre la misma se
-    --llega a la solucion anterior
-    if y < len(matrix!!x)
-        then
-            if (indexMatriz matrix x y) /= 1 &&
-                (indexMatriz matrix x y) /= (maxMatrix matrix) &&
-                (indexMatriz matrix x y) /= -1 &&
-                (indexMatriz matrix x y) /= 0
-                then
-                    if (equalOrBest matrix (fullMatrixUniques((setInMatrix matrix 0 x y)))) == True
+                    if (matrix) /= (adjUnique matrix x y) --si habra cambio hacer el cambio
                         then
-                            generateWithMatrix1 (setInMatrix matrix 0 x y) x (y+1)
+                            roundMatrixUniques1 (adjUnique matrix x y) x (y+1)
                         else    
-                            generateWithMatrix1 matrix x (y+1)
-                else            
-                    generateWithMatrix1 matrix x (y+1)
-        else 
-            if x < (len (matrix)-1)
-                then
-                    generateWithMatrix1 matrix (x+1) 0
+                            roundMatrixUniques1 matrix x (y+1) 
                 else
-                    matrix
+                    if(len(endValues matrix x y))==1 && (indexMatriz matrix x y) == 0 && ((endValues matrix x y)!!0) /= (-1)
+                        then
+                            roundMatrixUniques1 (setInMatrix matrix ((endValues matrix x y)!!0) x y) x (y+1)
+                        else    
+                            roundMatrixUniques1 matrix x (y+1) 
+        else
+            if x < (len(matrix)-1)
+                then
+                    roundMatrixUniques1 matrix (x+1) 0 
+                else 
+                    matrix 
+
 
 --Dado una matriz devuelve la lista de coordenadas de los valores distintos de cero, 1 y -1
 boxCoor matrix = boxCoor1 matrix 0 (remove(remove(remove(remove (allValuesMatrix matrix) (-2)) 0)(maxMatrix matrix+1))1) []
