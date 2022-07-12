@@ -25,11 +25,10 @@ source-repository head
 
 library
   exposed-modules:
-      For
       Lib
+      Main
       Matrix
       Solver
-      Test
   other-modules:
       Paths_Hidato
   hs-source-dirs:

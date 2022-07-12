@@ -1,4 +1,6 @@
-import Matrix 
+module Solver (backtraking ) where
+import Matrix
+import Lib 
 -- For para el backtraking 
 --- args:
 ---- f: Funcion a ejecutar parametros del for
@@ -46,9 +48,8 @@ backtraking current end boxes matrix =
 --boxes = [[0,2],[1,0]]
 --backtraking current end boxes matrix
 
-
---let matrix = [[1,-1],[0,3]]
---current = [0,0]
---end = [1,1]
---boxes = [end]
---backtraking current end boxes matrix
+-- let matrix = [[0  ,33 ,35 ,0  ,0  ,-1 ,-1 ,-1 ], [0  ,0  ,24 ,22 ,0  ,-1 ,-1 ,-1 ], [0  ,0  ,0  ,21 ,0  ,0  ,-1 ,-1 ], [0  ,26 ,0  ,13 ,40 ,11 ,-1, -1 ], [27 ,0  ,0  ,0  ,9  ,0  ,1  ,-1 ], [-1 ,-1 ,0  ,0  ,18 ,0  ,0  ,-1 ], [-1 ,-1 ,-1 ,-1 ,0  ,7  ,0  ,0  ], [-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,5  ,0  ]]
+-- boxes = ord_boxes matrix (boxCoor matrix)
+-- current = posUno matrix
+-- end = boxes!!0
+-- del = backtraking current end boxes matrix
