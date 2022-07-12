@@ -11,7 +11,7 @@ import Lib
 ---- Value: valor del siguiente vecino
 ---- boxes: son las casillas marcadas
 myfold_bool f matrix ys xs  end value boxes  = aux matrix ys xs  end value boxes
-  where  aux matrix ys []  end value boxes     = ys
+  where  aux matrix ys []  end value boxes     = /ys
         --  aux matrix (True, _) _  end value boxes = ys
          aux matrix ys (x:xs)  end value boxes = aux matrix (f matrix ys x end value boxes) xs  end value boxes
 

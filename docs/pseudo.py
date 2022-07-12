@@ -3,8 +3,7 @@ import random
 
 def have_neigbor(end_x, end_y, table,):
     for x,y in [(1,0),(1,1),(1,-1),(0,1),(0,-1),(-1,0),(-1,1),(-1,-1)]:
-            if table[end_x+x][end_y+y]==0:
-                return True
+        if table[end_x+x][end_y+y]==0: return True
     return False
 
 def backtracking(current_x, current_y, end_x, end_y, table, boxes:List):
@@ -26,8 +25,8 @@ def backtracking(current_x, current_y, end_x, end_y, table, boxes:List):
                 return backtracking(current_x, current_y, end_x, end_y, table, boxes)
         else:
             return False 
-    
-    elif have_neigbor(end_x, end_y, table,):     
+    elif have_neigbor(end_x, end_y, table,):
+         
         neigbors = valid_neigbors(current_x, current_y, table,)
 
         while len(neigbors)!=0:
@@ -41,7 +40,7 @@ def backtracking(current_x, current_y, end_x, end_y, table, boxes:List):
             if backtracking(neigbor_x, neigbor_y, end_x, end_y, table, boxes):
                 return True
             table[neigbor_x][neigbor_y]=0
-        
+            
     return False
 
 def  valid_neigbors(cord_x, cord_y, table,):
@@ -78,7 +77,6 @@ def print_matrix(a):
 #             casillas.append((i,j))
             
 # casillas.sort(key = lambda x: a[x[0]][x[1]])
-# print_matrix(a)
 # print(casillas)
 # matrix = []
 # for i in range(0,80):
