@@ -344,7 +344,6 @@ adjEmptyPos1 matrix x y i =
         else
             [-1,-1]
 
-
 --Devuelve se la matriz resultante poseen al menos todos los valores fijos de la anterior
 equalOrBest matrix matrixresult = equalOrBest1 matrix matrixresult 0 0
 equalOrBest1 matrix matrixresult x y =
@@ -420,8 +419,9 @@ roundMatrixUniques1 matrix x y =
                     matrix 
 
 
+
 --Dado una matriz devuelve la lista de coordenadas de los valores distintos de cero, 1 y -1
-boxCoor matrix = boxCoor1 matrix 0 (remove(remove(remove(remove (allValuesMatrix matrix) (-2)) 0)(maxMatrix matrix+1))1) []
+boxCoor matrix n  = boxCoor1 matrix 0 (filter (>n) (remove (allValuesMatrix matrix) (maxMatrix matrix+1))) []
 boxCoor1 matrix i all result=
     if i < len(all)
         then
@@ -444,4 +444,3 @@ posValue1 value matrix x y =
             if x < (len(matrix)-1)
                 then posValue1 value matrix (x+1) 0
                 else [-1]
-

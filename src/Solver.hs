@@ -16,38 +16,44 @@ myfold_bool f matrix acc xs  end value boxes  = aux matrix acc xs  end value box
         --  aux matrix (True, _) _  end value boxes = acc
          aux matrix acc (x:xs)  end value boxes = aux matrix (f matrix acc x end value boxes) xs  end value boxes
 
--- f_back matrix acc neigbor end value boxes = 
---     if (fst acc) == True
---         then acc
---         else backtraking neigbor end boxes (setInMatrix matrix value (neigbor!!0) (neigbor!!1))
+-- Agrega los valores unicos
+changeMatrix matrix value neigbor = 
+    (setInMatrix matrix value (neigbor!!0) (neigbor!!1))
+    -- fullMatrixUniques ((setInMatrix matrix value (neigbor!!0) (neigbor!!1)))
+
+updateEnd :: [[Int]]->Int->[Int]
+updateEnd matrix n = 
+    let boxes = ord_boxes matrix (boxCoor matrix n)
+    in if boxes == [] 
+        then []
+        else boxes!!0
 
 backtraking :: [Int] -> [Int] -> [[Int]] -> [[Int]] ->(Bool, [[Int]])
-backtraking current end boxes matrix = 
+backtraking current end matrix = 
     -- Comprueba que haya llegado al objetivo por el camino correcto 
     -- sino regresa hacia atrás y se mueve por otra casilla
     if index matrix current  == index matrix end
         then if current == end
-                then 
-                let t_last = lastIn boxes 
-                    in if current == t_last
-                        then (True, matrix)
-                         else let t_next = nextBox current boxes
-                                in backtraking end t_next boxes matrix
-                                
+                then    let next_end = updateEnd matrix ((index matrix end)+1)
+                        in if next_end == []
+                            then (True, matrix)
+                            else backtraking end next_end matrix                
                 else (False, [])
-        -- dame los vecinos
-        else let neigbors = validNeigbors current matrix
-                in myfold_bool f_back matrix (False, []) neigbors end ((index matrix current)+1) boxes
+        else
+            ---si mi sucesor es el end buscalo en sus vecinos
+            let neigbors = validNeigbors current matrix
+                in myfold_bool fun matrix (False, []) neigbors end ((index matrix current)+1)
                 where
-                    f_back matrix acc neigbor end value boxes = if (fst acc) == True
+                    fun matrix acc neigbor end value  = if (fst acc) == True
                         then acc
-                        else backtraking neigbor end boxes (setInMatrix matrix value (neigbor!!0) (neigbor!!1))
+                        else let newMatrix = (changeMatrix matrix value neigbor)
+                             -- new end = updateEnd newMatrix value
+                             in backtraking neigbor end newMatrix
 
 solve matrix = 
-    let boxes = ord_boxes matrix (boxCoor matrix)
-        current = posUno matrix
-        end = boxes!!0
-        in backtraking current end boxes matrix
+    let current = posUno matrix
+        end = updateEnd matrix 2 
+        in backtraking current end matrix
 
 -- let matrix =   [[0  ,33 ,35 ,0  ,0  ,-1 ,-1 ,-1 ], [0  ,0  ,24 ,22 ,0  ,-1 ,-1 ,-1 ], [0  ,0  ,0  ,21 ,0  ,0  ,-1 ,-1 ], [0  ,26 ,0  ,13 ,40 ,11 ,-1, -1 ], [27 ,0  ,0  ,0  ,9  ,0  ,1  ,-1 ], [-1 ,-1 ,0  ,0  ,18 ,0  ,0  ,-1 ], [-1 ,-1 ,-1 ,-1 ,0  ,7  ,0  ,0  ], [-1 ,-1 ,-1 ,-1 ,-1 ,-1 ,5  ,0  ]]
 -- solve matrix

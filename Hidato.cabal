@@ -27,6 +27,7 @@ library
   exposed-modules:
       File
       Generator
+      J
       Lib
       Main
       Matrix

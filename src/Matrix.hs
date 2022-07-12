@@ -12,6 +12,9 @@ isValidCord  x y matrix = (x < length matrix) && (y <  length (matrix!!0)) && (x
 --Filtro para vecinos
 neigborValue x y n matrix = (matrix!!(x)!!(y)==0) || (matrix!!(x)!!(y)==n)
 
+-- Suma 2 coordenadas
+sumCord cord cord1 = [cord!!0 + cord1!!0 , cord!!1 + cord1!!1]
+
 --Validar una coordenada segun la tabla
 ---args:
 --- current: [[x,y]] donde x e y son las coordenadas
@@ -22,9 +25,6 @@ validCord current n matrix =
         in  if (isValidCord x y matrix) && (neigborValue x y n matrix)
             then current
             else []
-
--- Suma 2 coordenadas
-sumCord cord cord1 = [cord!!0 + cord1!!0 , cord!!1 + cord1!!1]
 
 --  Chequea cuales de sus vecinos son validos
 --   | 0 | 0 | 0 |
