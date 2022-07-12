@@ -195,20 +195,28 @@ uniqueInMid1 zom x y i j =
                 then
                     uniqueInMid1 zom x y (j+1) (j+1)
                 else
-                    admValues zom x y    
+                    --si tiene un solo vecino que sea cero no se puede decir que pueda ser unico
+                    -- luego pasar pot todos los vecinos consigo mismo(serian sus vecinos) y prenguntar
+                    -- la cantidad vacios
+                    if (communneigbordEmpty zom x y x y) > 0
+                        then
+                            [-1, -1]
+                        else    
+                            admValues zom x y    
 
 --Devuelve la cantidad vecinos comunes que estan vacios
 communneigbordEmpty :: [[Int]]->Int->Int->Int->Int->Int
-communneigbordEmpty zom x1 y1 x2 y2 = communneigbordEmpty1 zom x1 y1 x2 y2 0 0
+communneigbordEmpty zom x1 y1 x2 y2 = communneigbordEmpty1 zom x1 y1 x2 y2 0 0 (communeNeibordsZeroIsOne zom x1 y1 x2 y2)
 
-communneigbordEmpty1 :: [[Int]]->Int->Int->Int->Int->Int->Int->Int
-communneigbordEmpty1 zom x1 y1 x2 y2 result i =
+communneigbordEmpty1 :: [[Int]]->Int->Int->Int->Int->Int->Int->[[Int]]->Int
+communneigbordEmpty1 zom x1 y1 x2 y2 result i matrixZero=
     if i < (len(communneigbords x1 y1 x2 y2))
         then
             communneigbordEmpty1 
             zom x1 y1 x2 y2 
-            (result + (zeroIsOne zom)!!((communneigbords x1 y1 x2 y2)!!i!!0)!!((communneigbords x1 y1 x2 y2)!!i!!1)) 
+            (result + matrixZero!!((communneigbords x1 y1 x2 y2)!!i!!0)!!((communneigbords x1 y1 x2 y2)!!i!!1)) 
             (i+1)
+            matrixZero
         else
             result    
 
@@ -228,6 +236,19 @@ zeroIsOne1 matrix x y =
                 zeroIsOne1 matrix (x+1) 0
             else 
                 matrix   
+
+--solo aplica el cambio a los vecinos comunes de un par de posiciones
+communeNeibordsZeroIsOne matrix x1 y1 x2 y2= communeNeibordsZeroIsOne1 matrix (communneigbords x1 y1 x2 y2) 0 
+communeNeibordsZeroIsOne1 matrix neig i=
+    if i < len(neig)
+        then
+            if (indexMatriz matrix (neig!!i!!0) (neig!!i!!1)) == 0
+                    then
+                        communeNeibordsZeroIsOne1 (setInMatrix matrix 1 (neig!!i!!0) (neig!!i!!1)) neig (i+1)
+                    else
+                        communeNeibordsZeroIsOne1 (setInMatrix matrix 0 (neig!!i!!0) (neig!!i!!1)) neig (i+1)
+        else 
+            matrix    
 
 neigbords :: Int->Int ->[[Int]]
 neigbords x y =
@@ -266,20 +287,21 @@ maxMatrix1 matrix result y=
 
 --Dado una posicion si solo tiene un adyacente accesible y su sucesor o antecesor no esta en el tablero entonces 
 --lo asigna al accesible
-adjUnique matrix x y =
+adjUnique matrix x y = adjUnique1 matrix x y (adjEmptyPos matrix x y)
+adjUnique1 matrix x y adj = 
     if (adjValues matrix x y) == 1
         then
             if contain (allValuesMatrix matrix) ((indexMatriz matrix x y)+1) == False
                 then
                     if (indexMatriz matrix x y) /= (maxMatrix(matrix))
                         then
-                            setInMatrix matrix ((indexMatriz matrix x y)+1) ((adjEmptyPos matrix x y)!!0) ((adjEmptyPos matrix x y)!!1)
+                            setInMatrix matrix ((indexMatriz matrix x y)+1) (adj!!0) (adj!!1)
                         else                
                             if (contain (allValuesMatrix matrix) ((indexMatriz matrix x y)-1)) == False
                                 then
                                     if (indexMatriz matrix x y) /= 1
                                         then
-                                            setInMatrix matrix ((indexMatriz matrix x y)-1) ((adjEmptyPos matrix x y)!!0) ((adjEmptyPos matrix x y)!!1)
+                                            setInMatrix matrix ((indexMatriz matrix x y)-1) (adj!!0) (adj!!1)
                                         else
                                             matrix
                                 else
@@ -289,7 +311,7 @@ adjUnique matrix x y =
                         then
                             if (indexMatriz matrix x y) /= 1
                                 then
-                                    setInMatrix matrix ((indexMatriz matrix x y)-1) ((adjEmptyPos matrix x y)!!0) ((adjEmptyPos matrix x y)!!1)
+                                    setInMatrix matrix ((indexMatriz matrix x y)-1) (adj!!0) (adj!!1)
                                 else
                                     matrix
                         else 
@@ -298,11 +320,13 @@ adjUnique matrix x y =
             matrix                                    
     
 --Dado una posicion y la matriz devuelve cuantos adyecentes accesibles(modificables) tiene
-adjValues matrix x y = adjValues1 (zoom matrix) (x+1) (y+1) 0 0
-adjValues1 matrix x y i result=
+adjValues matrix x y = adjValues1 (zoom matrix) (x+1) (y+1) 0 0 (communeNeibordsZeroIsOne (zoom matrix) (x+1) (y+1) (x+1) (y+1))
+--se le entra la matriz donde solo cambian de cero a 1 y de `k` a `0`  los valores vecinos de la casilla (los comunes consigo misma)
+adjValues1 :: [[Int]]-> Int -> Int -> Int-> Int ->[[Int]] -> Int
+adjValues1 matrix x y i result matrixZero=
     if i < 8
         then
-            adjValues1 matrix x y (i+1) ((indexMatriz (zeroIsOne matrix) (x + ((mov i) !!0)) (y + ((mov i)!!1)))+result) 
+            adjValues1 matrix x y (i+1) ((indexMatriz matrixZero (x + ((mov i)!!0)) (y + ((mov i)!!1)))+result) matrixZero
         else 
             result    
 
