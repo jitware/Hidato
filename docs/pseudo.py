@@ -1,11 +1,15 @@
 from typing import List
 
+def have_neigbor(end_x, end_y, table,):
+    for x,y in [(1,0),(1,1),(1,-1),(0,1),(0,-1),(-1,0),(-1,1),(-1,-1)]:
+        if table[end_x+x][end_y+y]==0: return True
+    return False
 
 def backtracking(current_x, current_y, end_x, end_y, table, boxes:List):
     # a =  table[current_x][current_y]
     # b =  table[end_x][end_y]
-    # print(current_x,current_y)
-    # print_matrix(table)
+    print(current_x,current_y)
+    print_matrix(table)
     if table[current_x][current_y]==table[end_x][end_y]:
     
         if current_x == end_x and current_y == end_y:
@@ -19,16 +23,17 @@ def backtracking(current_x, current_y, end_x, end_y, table, boxes:List):
                 return backtracking(current_x, current_y, end_x, end_y, table, boxes)
         else:
             return False 
+    elif have_neigbor(end_x, end_y, table,):
          
-    neigbors = valid_neigbors(current_x, current_y, table,)
-    for neigbor_x, neigbor_y in neigbors:
-        if table[neigbor_x][ neigbor_y]==0:
-            table[neigbor_x][ neigbor_y] = table[current_x][ current_y]+1
-        
-        if backtracking(neigbor_x, neigbor_y, end_x, end_y, table, boxes):
-            return True
-        table[neigbor_x][neigbor_y]=0
-        
+        neigbors = valid_neigbors(current_x, current_y, table,)
+        for neigbor_x, neigbor_y in neigbors:
+            if table[neigbor_x][ neigbor_y]==0:
+                table[neigbor_x][ neigbor_y] = table[current_x][ current_y]+1
+            
+            if backtracking(neigbor_x, neigbor_y, end_x, end_y, table, boxes):
+                return True
+            table[neigbor_x][neigbor_y]=0
+            
     return False
 
 def  valid_neigbors(cord_x, cord_y, table,):
@@ -49,23 +54,24 @@ def print_matrix(a):
     print('\n'.join(['  '.join(['{:2}'.format(item) for item in row])
         for row in a]))
     
-a = [[0,    33,   35,   0,    0,  '.',  '.',   '.'],
-     [0,    0,    24,   22,   0,  '.',  '.',   '.'],
-     [0,    0,    0,    21,   0,  0,    '.',   '.'],
-     [0,    26,   0,    13,   40, 11,   '.',   '.'],
-     [27,   0,    0,    0,    9,  0,    1,     '.'],
-     ['.',  '.',  0,    0,    18, 0,    0,     '.'],
-     ['.',  '.',  '.',  '.',  0,  7,    0,     0  ],
-     ['.',  '.',  '.',  '.',  '.','.',  5,     0  ],
-     ]
-casillas =[]
-for i in range(len(a)):
-    for j in range(len(a[len(a)-1])):
-        if a[i][j]!= '.' and a[i][j]>1:
-            casillas.append((i,j))
+# a = [[0,    33,   35,   0,    0,  '.',  '.',   '.'],
+#      [0,    0,    24,   22,   0,  '.',  '.',   '.'],
+#      [0,    0,    0,    21,   0,  0,    '.',   '.'],
+#      [0,    26,   0,    13,   40, 11,   '.',   '.'],
+#      [27,   0,    0,    0,    9,  0,    1,     '.'],
+#      ['.',  '.',  0,    0,    18, 0,    0,     '.'],
+#      ['.',  '.',  '.',  '.',  0,  7,    0,     0  ],
+#      ['.',  '.',  '.',  '.',  '.','.',  5,     0  ],
+#      ]
+# casillas =[]
+# for i in range(len(a)):
+#     for j in range(len(a[len(a)-1])):
+#         if a[i][j]!= '.' and a[i][j]>1:
+#             casillas.append((i,j))
             
-casillas.sort(key = lambda x: a[x[0]][x[1]])
-print_matrix(a)
-print(casillas)
+# casillas.sort(key = lambda x: a[x[0]][x[1]])
+# print(casillas)
 
-backtracking(7, 6, 3, 4, a, casillas)
+a = [[0, 0  , 0,  0, 0,  0,  0 ],[0, 0  , 1,  0, 0,  0, -1 ],[0, -1 , 0,  0, 0,  0, -1 ],[0, -1 , 0,  0, 0,  0, -1 ],[0, -1 , 0,  0, 40, 0,  0 ],[0, 0  , 0,  0, 0,  0,  0 ],[0, 0  , -1,-1,-1,  0,  0 ]]
+backtracking(1, 2, 4, 4, a, [(4,4)])
+
