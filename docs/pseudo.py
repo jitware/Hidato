@@ -1,4 +1,5 @@
 from typing import List
+import random
 
 def have_neigbor(end_x, end_y, table,):
     for x,y in [(1,0),(1,1),(1,-1),(0,1),(0,-1),(-1,0),(-1,1),(-1,-1)]:
@@ -9,14 +10,15 @@ def have_neigbor(end_x, end_y, table,):
 def backtracking(current_x, current_y, end_x, end_y, table, boxes:List):
     # a =  table[current_x][current_y]
     # b =  table[end_x][end_y]
-    print(current_x,current_y)
-    print_matrix(table)
+    # print(current_x,current_y)
     if table[current_x][current_y]==table[end_x][end_y]:
     
         if current_x == end_x and current_y == end_y:
             last = -1
             last_x, last_y = boxes[last]
             if current_x == last_x and current_y == last_y:
+                print_matrix(table)
+
                 return True
             else:
                 next =  boxes.index((end_x, end_y)) + 1
@@ -27,7 +29,12 @@ def backtracking(current_x, current_y, end_x, end_y, table, boxes:List):
     
     elif have_neigbor(end_x, end_y, table,):     
         neigbors = valid_neigbors(current_x, current_y, table,)
-        for neigbor_x, neigbor_y in neigbors:
+
+        while len(neigbors)!=0:
+            num = random.randint(0,len(neigbors)-1)
+            neigbor= neigbors[num]
+            neigbors.remove(neigbor)
+            neigbor_x, neigbor_y  = neigbor
             if table[neigbor_x][ neigbor_y]==0:
                 table[neigbor_x][ neigbor_y] = table[current_x][ current_y]+1
             
@@ -73,6 +80,12 @@ def print_matrix(a):
 # casillas.sort(key = lambda x: a[x[0]][x[1]])
 # print_matrix(a)
 # print(casillas)
+# matrix = []
+# for i in range(0,80):
+#     lst = [0] * 80
+#     matrix.append(lst)
+# matrix[1][2]=1
+# matrix[4][4]=4
 
 matrix = [[0, 0  , 0,  0, 0,  0,  0 ],[0, 0  , 1,  0, 0,  0, -1 ],[0, -1 , 0,  0, 0,  0, -1 ],[0, -1 , 0,  0, 0,  0, -1 ],[0, -1 , 0,  0, 40, 0,  0 ],[0, 0  , 0,  0, 0,  0,  0 ],[0, 0  , -1,-1,-1,  0,  0 ]]
-backtracking(1, 2, 4, 4, matrix, (4,4))
+backtracking(1, 2, 4, 4, matrix, [(4,4)])
