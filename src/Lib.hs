@@ -1,9 +1,4 @@
-{-# LANGUAGE FlexibleContexts #-}
-module Lib
-    ( someFunc
-    ) where
-
-someFunc = putStrLn "someFunc"
+module Lib (boxCoor,posValue, posUno, maxMatrix, allValuesMatrix,setInMatrix ) where
 
 index list x = list!!x -- devuelve el elemento de la lista que se encuentra en la posicion x
 
