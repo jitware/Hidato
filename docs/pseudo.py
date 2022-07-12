@@ -2,7 +2,12 @@ from typing import List
 
 def have_neigbor(end_x, end_y, table,):
     for x,y in [(1,0),(1,1),(1,-1),(0,1),(0,-1),(-1,0),(-1,1),(-1,-1)]:
+<<<<<<< HEAD
         if table[end_x+x][end_y+y]==0: return True
+=======
+            if table[end_x+x][end_y+y]==0:
+                return True
+>>>>>>> 316682ded909ed82316158862e9f18a2b3227d3e
     return False
 
 def backtracking(current_x, current_y, end_x, end_y, table, boxes:List):
@@ -23,8 +28,13 @@ def backtracking(current_x, current_y, end_x, end_y, table, boxes:List):
                 return backtracking(current_x, current_y, end_x, end_y, table, boxes)
         else:
             return False 
+<<<<<<< HEAD
     elif have_neigbor(end_x, end_y, table,):
          
+=======
+    
+    elif have_neigbor(end_x, end_y, table,):     
+>>>>>>> 316682ded909ed82316158862e9f18a2b3227d3e
         neigbors = valid_neigbors(current_x, current_y, table,)
         for neigbor_x, neigbor_y in neigbors:
             if table[neigbor_x][ neigbor_y]==0:
@@ -33,7 +43,11 @@ def backtracking(current_x, current_y, end_x, end_y, table, boxes:List):
             if backtracking(neigbor_x, neigbor_y, end_x, end_y, table, boxes):
                 return True
             table[neigbor_x][neigbor_y]=0
+<<<<<<< HEAD
             
+=======
+        
+>>>>>>> 316682ded909ed82316158862e9f18a2b3227d3e
     return False
 
 def  valid_neigbors(cord_x, cord_y, table,):
@@ -70,8 +84,16 @@ def print_matrix(a):
 #             casillas.append((i,j))
             
 # casillas.sort(key = lambda x: a[x[0]][x[1]])
+<<<<<<< HEAD
 # print(casillas)
 
 a = [[0, 0  , 0,  0, 0,  0,  0 ],[0, 0  , 1,  0, 0,  0, -1 ],[0, -1 , 0,  0, 0,  0, -1 ],[0, -1 , 0,  0, 0,  0, -1 ],[0, -1 , 0,  0, 40, 0,  0 ],[0, 0  , 0,  0, 0,  0,  0 ],[0, 0  , -1,-1,-1,  0,  0 ]]
 backtracking(1, 2, 4, 4, a, [(4,4)])
 
+=======
+# print_matrix(a)
+# print(casillas)
+
+matrix = [[0, 0  , 0,  0, 0,  0,  0 ],[0, 0  , 1,  0, 0,  0, -1 ],[0, -1 , 0,  0, 0,  0, -1 ],[0, -1 , 0,  0, 0,  0, -1 ],[0, -1 , 0,  0, 40, 0,  0 ],[0, 0  , 0,  0, 0,  0,  0 ],[0, 0  , -1,-1,-1,  0,  0 ]]
+backtracking(1, 2, 4, 4, matrix, (4,4))
+>>>>>>> 316682ded909ed82316158862e9f18a2b3227d3e

@@ -1,4 +1,14 @@
-module Lib (boxCoor,posValue, posUno, maxMatrix, allValuesMatrix,setInMatrix ) where
+module Lib (boxCoor,posValue, posUno, maxMatrix, allValuesMatrix,setInMatrix, equalOrBest,roundMatrixUniques,len,indexMatriz,fullMatrixUniques ) where
+
+--Movimientos alrededor de una casilla
+mov 0 = [-1,-1]
+mov 1 = [-1,0]
+mov 2 = [-1,1]
+mov 3 = [0,-1]
+mov 4 = [0,1]
+mov 5 = [1,-1]
+mov 6 = [1,0]
+mov 7 = [1,1]
 
 index list x = list!!x -- devuelve el elemento de la lista que se encuentra en la posicion x
 
@@ -167,7 +177,7 @@ uniqueInMid1 zom x y i j =
                         then
                             uniqueInMid1 zom x y (i+1) j
                         else
-                            if (communVecineEmpty zom 
+                            if (communneigbordEmpty zom 
                                 (x+((mov i)!!0)) (y+((mov i)!!1)) (x+((mov j)!!0)) (y+((mov j)!!1))) == 1
                                 then
                                     if (contain (allValuesMatrix zom)
@@ -183,21 +193,21 @@ uniqueInMid1 zom x y i j =
         else 
             if j < 7
                 then
-                    uniqueInMid1 zom x y 0 (j+1)
+                    uniqueInMid1 zom x y (j+1) (j+1)
                 else
                     admValues zom x y    
 
 --Devuelve la cantidad vecinos comunes que estan vacios
-communVecineEmpty :: [[Int]]->Int->Int->Int->Int->Int
-communVecineEmpty zom x1 y1 x2 y2 = communVecineEmpty1 zom x1 y1 x2 y2 0 0
+communneigbordEmpty :: [[Int]]->Int->Int->Int->Int->Int
+communneigbordEmpty zom x1 y1 x2 y2 = communneigbordEmpty1 zom x1 y1 x2 y2 0 0
 
-communVecineEmpty1 :: [[Int]]->Int->Int->Int->Int->Int->Int->Int
-communVecineEmpty1 zom x1 y1 x2 y2 result i =
-    if i < (len(communVecines x1 y1 x2 y2))
+communneigbordEmpty1 :: [[Int]]->Int->Int->Int->Int->Int->Int->Int
+communneigbordEmpty1 zom x1 y1 x2 y2 result i =
+    if i < (len(communneigbords x1 y1 x2 y2))
         then
-            communVecineEmpty1 
+            communneigbordEmpty1 
             zom x1 y1 x2 y2 
-            (result + (zeroIsOne zom)!!((communVecines x1 y1 x2 y2)!!i!!0)!!((communVecines x1 y1 x2 y2)!!i!!1)) 
+            (result + (zeroIsOne zom)!!((communneigbords x1 y1 x2 y2)!!i!!0)!!((communneigbords x1 y1 x2 y2)!!i!!1)) 
             (i+1)
         else
             result    
@@ -219,8 +229,8 @@ zeroIsOne1 matrix x y =
             else 
                 matrix   
 
-vecines :: Int->Int ->[[Int]]
-vecines x y =
+neigbords :: Int->Int ->[[Int]]
+neigbords x y =
     [[(x-1),(y-1)],
     [(x-1),(0 +y)],
     [(x-1),(1 +y)],
@@ -231,15 +241,15 @@ vecines x y =
     [(1+x),(1 +y)]]
 
 --devuelve una lista con todos los vecinos comunes
-communVecines x y x1 y1 =  communVecines1 x y x1 y1 [] 0
-communVecines1 x y x1 y1 result i = 
+communneigbords x y x1 y1 =  communneigbords1 x y x1 y1 [] 0
+communneigbords1 x y x1 y1 result i = 
     if i < 8
         then
-            if (contain (vecines x y) ((vecines x1 y1)!!i)) == True
+            if (contain (neigbords x y) ((neigbords x1 y1)!!i)) == True
                 then
-                    communVecines1 x y x1 y1 (add result ((vecines x1 y1)!!i)) (i+1)
+                    communneigbords1 x y x1 y1 (add result ((neigbords x1 y1)!!i)) (i+1)
                 else    
-                    communVecines1 x y x1 y1 result (i+1)
+                    communneigbords1 x y x1 y1 result (i+1)
         else
             result            
 
@@ -253,91 +263,6 @@ maxMatrix1 matrix result y=
             maxMatrix1 matrix (add result (maximum (index matrix y))) (y+1)
         else
             maximum result    
-
---Dada una matriz con numeros devuelve si es valida la misma, si es alcanzable 
-validMatrix matrix = validMatrix1 matrix 0 0 
-validMatrix1 matrix x y= 
-    if y < len(index matrix x)
-        then
-            validPos matrix x y && validMatrix1 matrix x (y+1)
-        else
-            if x < ((len matrix) -1)
-                then
-                    validMatrix1 matrix (x+1) 0
-                else
-                    True
---dada una posicion analiza si es posible que el valor de la misma sea el que tiene
-validPos matrix x y = 
-    if (indexMatriz matrix x y) == -1 ||(indexMatriz matrix x y) == 0
-        then
-            True
-        else    
-            validPos1 matrix [] x y x y (zoom matrix)
-validPos1 matrix adj x y countX countY zom = 
-    if countY < y + 3
-        then
-            if countX == (x+1) && countY == (y+1)
-                then
-                    validPos1 matrix adj x y (countX) (countY+1) zom
-                else 
-                    validPos1 matrix (add adj (indexMatriz zom countX countY)) x y (countX) (countY+1) zom
-        else 
-            if countX < x+2
-                then
-                    validPos1 matrix adj x y (countX+1) 0 zom
-                else
-                    if (indexMatriz matrix x y) == (maxMatrix matrix) 
-                        then
-                            (contain adj ((maxMatrix matrix)-1)) || (contain adj 0)
-                        else 
-                            if (indexMatriz matrix x y) == 1 
-                                then
-                                    (contain adj 2) || (contain adj 0)
-                                else
-                                    ((contain adj ((indexMatriz matrix x y)-1)) && (contain adj ((indexMatriz matrix x y)+1))) 
-                                    || 
-                                    ((contain adj ((indexMatriz matrix x y)-1)) && (contain adj 0))
-                                    ||
-                                    ((contain adj ((indexMatriz matrix x y)+1)) && (contain adj 0))
-                                    ||
-                                    ((contain adj 0) && (contain (remove adj 0) 0))
-
---Dada una matriz completamente llena de numeros devuelve si la misma es solucion
-validMatrixComplete matrix = validMatrixComplete1 matrix 0 0
-validMatrixComplete1 matrix x y =
-    if y < len(index matrix x)
-        then
-            validPosComplete matrix x y && validMatrixComplete1 matrix x (y+1)
-        else
-            if x < ((len matrix) -1)
-                then
-                    validMatrixComplete1 matrix (x+1) 0
-                else
-                    True
-
-validPosComplete matrix x y = validPosComplete1 matrix [] x y x y (zoom matrix)
-validPosComplete1 matrix adj x y countX countY zom = 
-    if countY < y + 3
-        then
-            if countX == (x+1) && countY == (y+1)
-                then
-                    validPos1 matrix adj x y (countX) (countY+1) zom
-                else 
-                    validPos1 matrix (add adj (indexMatriz zom countX countY)) x y (countX) (countY+1) zom
-        else 
-            if countX < x+2
-                then
-                    validPos1 matrix adj x y (countX+1) 0 zom
-                else
-                    if (indexMatriz matrix x y) == (maxMatrix matrix) 
-                        then
-                            (contain adj ((maxMatrix matrix)-1))
-                        else 
-                            if (indexMatriz matrix x y) == 1 
-                                then
-                                    (contain adj 2)
-                                else
-                                    ((contain adj ((indexMatriz matrix x y)-1)) && (contain adj ((indexMatriz matrix x y)+1))) 
 
 --Dado una posicion si solo tiene un adyacente accesible y su sucesor o antecesor no esta en el tablero entonces 
 --lo asigna al accesible
@@ -395,16 +320,24 @@ adjEmptyPos1 matrix x y i =
         else
             [-1,-1]
 
---Movimientos alrededor de una casilla
-mov 0 = [-1,-1]
-mov 1 = [-1,0]
-mov 2 = [-1,1]
-mov 3 = [0,-1]
-mov 4 = [0,1]
-mov 5 = [1,-1]
-mov 6 = [1,0]
-mov 7 = [1,1]
 
+--Devuelve se la matriz resultante poseen al menos todos los valores fijos de la anterior
+equalOrBest matrix matrixresult = equalOrBest1 matrix matrixresult 0 0
+equalOrBest1 matrix matrixresult x y =
+    if y < len(matrix!!x)
+        then
+            if ((indexMatriz matrix x y) /= 0) && ((indexMatriz matrix x y) /= -1)
+                then
+                    (indexMatriz matrix x y) == (indexMatriz matrixresult x y) &&
+                    equalOrBest1 matrix matrixresult x (y+1)
+                else
+                    equalOrBest1 matrix matrixresult x (y+1)    
+        else
+            if x<(len(matrix)-1)
+                then
+                    equalOrBest1 matrix matrixresult (x+1) 0
+                else
+                    True        
 
 -- llena la matriz de valores unicos, valores que siempre seran obligatorios
 fullMatrixUniques matrix = fullMatrixUniques1 matrix True
@@ -437,50 +370,31 @@ fullMatrixUniques2 matrix x y changes=
                 else 
                     fullMatrixUniques1 matrix (changes > 0)   
 
---Devuelve se la matriz resultante poseen al menos todos los valores fijos de la anterior
-equalOrBest matrix matrixresult = equalOrBest1 matrix matrixresult 0 0
-equalOrBest1 matrix matrixresult x y =
+--Aplica valores unicos una sola vez en toda la matriz
+roundMatrixUniques matrix = roundMatrixUniques1 matrix 0 0
+roundMatrixUniques1 matrix x y =
     if y < len(matrix!!x)
         then
-            if ((indexMatriz matrix x y) /= 0) && ((indexMatriz matrix x y) /= -1)
+            if (indexMatriz matrix x y) /= 0
                 then
-                    (indexMatriz matrix x y) == (indexMatriz matrixresult x y) &&
-                    equalOrBest1 matrix matrixresult x (y+1)
-                else
-                    equalOrBest1 matrix matrixresult x (y+1)    
-        else
-            if x<(len(matrix)-1)
-                then
-                    equalOrBest1 matrix matrixresult (x+1) 0
-                else
-                    True        
-
-generateWithMatrix matrix = generateWithMatrix1 matrix 0 0
-generateWithMatrix1 :: [[Int]]->Int-> Int->[[Int]]
-generateWithMatrix1 matrix x y =
-    --si al generar todos los unicos despues de editar la matrix se llega a todos los valores fijados de la anterior
-    --pues se dice que la posicion que se elimino tiene valor unico ya que cambiando solo valores unicos sobre la misma se
-    --llega a la solucion anterior
-    if y < len(matrix!!x)
-        then
-            if (indexMatriz matrix x y) /= 1 &&
-                (indexMatriz matrix x y) /= (maxMatrix matrix) &&
-                (indexMatriz matrix x y) /= -1 &&
-                (indexMatriz matrix x y) /= 0
-                then
-                    if (equalOrBest matrix (fullMatrixUniques((setInMatrix matrix 0 x y)))) == True
+                    if (matrix) /= (adjUnique matrix x y) --si habra cambio hacer el cambio
                         then
-                            generateWithMatrix1 (setInMatrix matrix 0 x y) x (y+1)
+                            roundMatrixUniques1 (adjUnique matrix x y) x (y+1)
                         else    
-                            generateWithMatrix1 matrix x (y+1)
-                else            
-                    generateWithMatrix1 matrix x (y+1)
-        else 
-            if x < (len (matrix)-1)
-                then
-                    generateWithMatrix1 matrix (x+1) 0
+                            roundMatrixUniques1 matrix x (y+1) 
                 else
-                    matrix
+                    if(len(endValues matrix x y))==1 && (indexMatriz matrix x y) == 0 && ((endValues matrix x y)!!0) /= (-1)
+                        then
+                            roundMatrixUniques1 (setInMatrix matrix ((endValues matrix x y)!!0) x y) x (y+1)
+                        else    
+                            roundMatrixUniques1 matrix x (y+1) 
+        else
+            if x < (len(matrix)-1)
+                then
+                    roundMatrixUniques1 matrix (x+1) 0 
+                else 
+                    matrix 
+
 
 --Dado una matriz devuelve la lista de coordenadas de los valores distintos de cero, 1 y -1
 boxCoor matrix = boxCoor1 matrix 0 (remove(remove(remove(remove (allValuesMatrix matrix) (-2)) 0)(maxMatrix matrix+1))1) []
