@@ -39,7 +39,7 @@ validNeigbors current matrix=
 valid_neigbors current matrix= getNeigbors matrix current 
     -- lopp matrix [] [[1,0],[1,1],[1,-1],[0,1],[0,-1],[-1,0],[-1,1],[-1,-1]] current
 
-last_box boxes = boxes!!((length boxes)-1)
+lastIn list = list!!((length list)-1)
 
 -- Busca las coordenas de un valor
 getIndex matrix n = getIndex_1 matrix 0 n
