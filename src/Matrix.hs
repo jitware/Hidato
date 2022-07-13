@@ -1,11 +1,11 @@
-module Matrix (nextBox,index,ord_boxes, setInMatrix,getIndex , validNeigbors, lastIn, boxCoor ) where
+module Matrix (nextBox,index,ord_boxes, setInMatrix,getIndex , validNeigbors, boxCoor ) where
 import Lib
 
 index matrix cord = matrix!!(cord!!0)!!(cord!!1)
 
-myFoldl f matrix ys xs current = aux matrix ys xs current
-  where  aux matrix ys [] current     = ys
-         aux matrix ys (x:xs) current = aux matrix (f matrix ys x current) xs current
+myFoldl f matrix acc xs current = aux matrix acc xs current
+  where  aux matrix acc [] current     = acc
+         aux matrix acc (x:xs) current = aux matrix (f matrix acc x current) xs current
 
 isValidCord  x y matrix = (x < length matrix) && (y <  length (matrix!!0)) && (x>=0) && (y>=0)
 
@@ -30,16 +30,14 @@ validCord current n matrix =
 --   | 0 | 0 | 0 |
 --   | 0 | x | 0 |
 --   | 0 | 0 | 0 |
-validNeigbors current matrix=
-    myFoldl func matrix []  [[1,0],[1,1],[1,-1],[0,1],[0,-1],[-1,0],[-1,1],[-1,-1]] current
-    where
-        func matrix x num current = x ++ validCord [sumCord num current] ((index matrix current)+1) matrix
+-- validNeigbors current matrix=
+--     myFoldl func matrix []  [[1,0],[1,1],[1,-1],[0,1],[0,-1],[-1,0],[-1,1],[-1,-1]] current
+--     where
+--         func matrix x num current = x ++ validCord [sumCord num current] ((index matrix current)+1) matrix
 
---
-valid_neigbors current matrix= getNeigbors matrix current 
+validNeigbors ::[Int]->[[Int]] -> [[Int]]
+validNeigbors current matrix= getNeigbors matrix current 
     -- lopp matrix [] [[1,0],[1,1],[1,-1],[0,1],[0,-1],[-1,0],[-1,1],[-1,-1]] current
-
-lastIn list = list!!((length list)-1)
 
 -- Busca las coordenas de un valor
 getIndex matrix n = getIndex_1 matrix 0 n
@@ -63,7 +61,6 @@ quicksort matrix (x:xs) =
 
 ord_boxes matrix xs = quicksort matrix xs
 
-
 getNeigbors :: [[Int]]->[Int]->[[Int]]
 getNeigbors matrix current = getNeigbors1 (zoom matrix) [(current!!0 +1),(current!!1 +1)] ((indexMatriz matrix (current!!0) (current!!1))+1) [] 0
 getNeigbors1 :: [[Int]]->[Int]->Int->[[Int]] -> Int ->[[Int]]
@@ -81,6 +78,3 @@ getNeigbors1 matrix current susc result i =
                             getNeigbors1 matrix current susc result (i+1)
         else    
             result
-
-
-
