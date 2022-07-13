@@ -30,8 +30,8 @@ func matrix x num current = x ++ valid_cord [[num!!0 + current!!0, num!!1 + curr
 lopp matrix cord lista current = myfold func matrix cord lista current 
 
 --
-valid_neigbors current matrix=
-    lopp matrix [] [[1,0],[1,1],[1,-1],[0,1],[0,-1],[-1,0],[-1,1],[-1,-1]] current
+valid_neigbors current matrix= getNeigbors matrix current 
+    -- lopp matrix [] [[1,0],[1,1],[1,-1],[0,1],[0,-1],[-1,0],[-1,1],[-1,-1]] current
 
 last_box boxes = boxes!!((length boxes)-1)
 --- a = [[0,0,0],[0,1,0],[2,0,0]]
@@ -59,5 +59,25 @@ quicksort matrix (x:xs) =
     in  smallerSorted ++ [x] ++ biggerSorted
 
 ord_boxes matrix xs = quicksort matrix xs
+
+
+getNeigbors :: [[Int]]->[Int]->[[Int]]
+getNeigbors matrix current = getNeigbors1 (zoom matrix) [(current!!0 +1),(current!!1 +1)] ((indexMatriz matrix (current!!0) (current!!1))+1) [] 0
+getNeigbors1 :: [[Int]]->[Int]->Int->[[Int]] -> Int ->[[Int]]
+getNeigbors1 matrix current susc result i = 
+    if i < 8
+        then
+            if (indexMatriz matrix (current!!0 + (mov i)!!0) (current!!1 + (mov i)!!1)) == susc
+                then
+                    [ [(current!!0 + (mov i)!!0 - 1),(current!!1 + (mov i)!!1 - 1)] ]
+                else
+                    if (indexMatriz matrix (current!!0 + (mov i)!!0) ((current!!1 + (mov i)!!1))) == 0
+                        then
+                            getNeigbors1 matrix current susc (add result [(current!!0 + (mov i)!!0 - 1),((current!!1 + (mov i)!!1 - 1))]) (i+1)    
+                        else    
+                            getNeigbors1 matrix current susc result (i+1)
+        else    
+            result
+
 
 

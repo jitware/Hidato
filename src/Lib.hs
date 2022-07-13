@@ -1,4 +1,5 @@
-module Lib (boxCoor,posValue, posUno, maxMatrix, allValuesMatrix,setInMatrix, equalOrBest,roundMatrixUniques,len,indexMatriz,fullMatrixUniques ) where
+module Lib (boxCoor,posValue, posUno, maxMatrix, allValuesMatrix,setInMatrix, equalOrBest,roundMatrixUniques,len
+,indexMatriz,fullMatrixUniques, mov, zoom, desZoom, add ) where
 
 --Movimientos alrededor de una casilla
 mov 0 = [-1,-1]
@@ -444,4 +445,5 @@ posValue1 value matrix x y =
             if x < (len(matrix)-1)
                 then posValue1 value matrix (x+1) 0
                 else [-1]
+
 

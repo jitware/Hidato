@@ -34,6 +34,7 @@ def backtracking(current_x, current_y, end_x, end_y, table, boxes:List):
             neigbor= neigbors[num]
             neigbors.remove(neigbor)
             neigbor_x, neigbor_y  = neigbor
+        # for neigbor_x, neigbor_y in neigbors:
             if table[neigbor_x][ neigbor_y]==0:
                 table[neigbor_x][ neigbor_y] = table[current_x][ current_y]+1
             
@@ -85,5 +86,5 @@ def print_matrix(a):
 # matrix[1][2]=1
 # matrix[4][4]=4
 
-matrix = [[0, 0  , 0,  0, 0,  0,  0 ],[0, 0  , 1,  0, 0,  0, -1 ],[0, -1 , 0,  0, 0,  0, -1 ],[0, -1 , 0,  0, 0,  0, -1 ],[0, -1 , 0,  0, 40, 0,  0 ],[0, 0  , 0,  0, 0,  0,  0 ],[0, 0  , -1,-1,-1,  0,  0 ]]
+matrix = [[0, 0  , 0,  0, 0,  0,  0 ],[0, 0  , 1,  0, 0,  0, 0],[0, 0, 0,  0, 0,  0, 0],[0, 0, 0,  0, 0,  0, 0],[0, 0, 0,  0, 40, 0,  0 ],[0, 0  , 0,  0, 0,  0,  0 ],[0, 0  , 0,0,0,  0,  0 ]]
 backtracking(1, 2, 4, 4, matrix, [(4,4)])
