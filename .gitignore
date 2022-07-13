@@ -1,3 +1,6 @@
 .stack-work/
 *~
+__pycache__/
+test.py
 .vscode/*
+test.hs

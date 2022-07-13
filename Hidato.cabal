@@ -26,10 +26,10 @@ source-repository head
 library
   exposed-modules:
       File
-      Game.Solver
       Generator
       Lib
       Matrix
+      Solver
   other-modules:
       Paths_Hidato
   hs-source-dirs:
