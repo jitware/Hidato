@@ -1,3 +1,4 @@
+module Generator (generate) where
 import Lib 
 import Solver
 
@@ -29,3 +30,4 @@ generateWithMatrix1 matrix x y maxM=
                     matrix
 
 generate semilla = generateWithMatrix(snd(solve(semilla)))
+

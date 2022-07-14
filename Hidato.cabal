@@ -25,12 +25,11 @@ source-repository head
 
 library
   exposed-modules:
-      File
+      Convert
       Generator
       Lib
       Matrix
       Solver
-      Test
   other-modules:
       Paths_Hidato
   hs-source-dirs:
