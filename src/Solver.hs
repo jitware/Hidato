@@ -1,8 +1,8 @@
-module Solver (backtraking,solve ) where
+module Solver (solveHidato,solve ) where
 import Matrix
 import Lib 
 
--- For para el backtraking 
+-- For para el solveHidato 
 --- args:
 ---- f: Funcion a ejecutar parametros del for
 ---- matrix: Tablero
@@ -31,38 +31,32 @@ updateEnd matrix n =
         then []
         else boxes!!0
 
-backtraking :: [Int] -> [Int] -> [[Int]] ->(Bool, [[Int]])
-backtraking current end matrix = 
+solveHidato :: [Int] -> [Int] -> [[Int]] ->(Bool, [[Int]])
+solveHidato current end Hidato = 
     -- Comprueba que haya llegado al objetivo por el camino correcto 
-    -- sino regresa hacia atrás y se mueve por otra casilla
-    
-    if index matrix current  == index matrix end
+    -- sino regresa hacia atrás y se mueve por otra vecino de la casilla
+    if index Hidato current  == index Hidato end
         then if current == end
-                then  let next_end = updateEnd matrix ((index matrix end)+1)
-                        in if next_end == []
-                            then (True, matrix)
-                            -- else  (True, matrix)
-                            else backtraking end next_end matrix                
+                then  
+                    let next_end = updateEnd Hidato ((index Hidato end)+1)
+                    in if next_end == []
+                        then (True, Hidato)
+                        else solveHidato end next_end Hidato                
+
                 else (False, [])
-        else let neigbors = validNeigbors current matrix
-            in tLoop fun matrix (False, []) neigbors end ((index matrix current)+1)
+        else let neigbors = validNeigbors current Hidato
+             in tLoop fun Hidato (False, []) neigbors end ((index Hidato current)+1)
                 where
-                    fun matrix acc neigbor end value  =
-                            let newMatrix = changeMatrix matrix value neigbor 
-                                -- newEnd = updateEnd newMatrix value
-                                newEnd = end
-                            in 
-                                if newEnd /= []
-                                    then backtraking neigbor newEnd newMatrix
-                                    else (True,matrix)
+                    fun Hidato acc neigbor end value  =
+                            let newHidato = changeMatrix Hidato value neigbor 
+                            in  solveHidato neigbor end newHidato 
+                            
+solve Hidato = 
+    let current = posUno Hidato
+        newHidato = fullMatrixUniques Hidato
+        end = updateEnd newHidato 1
+    in solveHidato current end newHidato
 
-solve matrix = 
-    let current = posUno matrix
-        newMatrix = fullMatrixUniques matrix
-        end = updateEnd newMatrix 1
-    in backtraking current end newMatrix
-
---- let matrix = [[0, 0  , 0,  0, 0,  0,  0 ],[0, 0  , 1,  0, 0,  0, 0 ],[0, 0 , 0,  0, 0,  0, 0 ],[0, 0 , 0,  0, 0,  0, 0 ],[0, 0 , 0,  0, 40, 0,  0 ],[0, 0  , 0,  0, 0,  0,  0 ],[0, 0  , 0,0,0,  0,  0 ]]
 --- let matrix = [[1,0,-1,6],[0,-1,0,0]]
 ---  let matrix = [[1,2,-1,6],[2,-1,0,0]]
 -- Caso 1
